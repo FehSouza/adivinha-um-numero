@@ -21,7 +21,6 @@ body {
   font-size: 20px;
   width: 575px;
   text-align: justify;
-  letter-spacing: 1px;
   margin-top: 32px;
 }
 
@@ -35,7 +34,6 @@ body {
 
 .orientation {
   font-size: 20px;
-  letter-spacing: 1px;
 }
 
 .shot {
@@ -49,7 +47,8 @@ body {
   outline: none;
 }
 
-.buttonSend {
+.buttonSend,
+.buttonReset {
   font-size: 20px;
   width: 160px;
   height: 40px;
@@ -58,24 +57,39 @@ body {
   background-color: #a9a9a9;
 }
 
-.buttonSend:hover {
+.buttonReset {
+  width: 180px;
+  margin-top: 32px;
+}
+
+.buttonSend:hover,
+.buttonReset:hover {
   cursor: pointer;
   background-color: #a9a9a9d9;
   transition-duration: 300ms;
 }
 
+.buttonSend:disabled {
+  cursor: not-allowed;
+}
+
 .previousShotWrapper,
-.checkerShot {
+.checkerShot,
+.checkerShotError {
   margin-top: 32px;
   width: 575px;
   font-size: 20px;
-  letter-spacing: 1px;
 }
 
-.checkerShot {
-  background-color: #45df40;
+.checkerShot,
+.checkerShotError {
+  background-color: #6ff76f;
   height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.checkerShotError {
+  background-color: #ff0000bb;
 }

@@ -34,6 +34,10 @@ $shotInserted.classList.add("shotInserted");
 const $checkerShot = document.createElement("span");
 $checkerShot.classList.add("checkerShot");
 
+const $buttonReset = document.createElement("button");
+$buttonReset.classList.add("buttonReset");
+$buttonReset.textContent = `Iniciar novo jogo`;
+
 $gameWrapper.appendChild($orientation);
 $gameWrapper.appendChild($shot);
 $gameWrapper.appendChild($buttonSend);
@@ -42,6 +46,7 @@ $container.appendChild($title);
 $container.appendChild($gameExplanation);
 $container.appendChild($gameWrapper);
 
+let shot = [];
 let randomNumber = "";
 
 const createRandomNumber = () => {
@@ -56,9 +61,7 @@ const convertShotInNumber = () => {
   return shotInNumber;
 };
 
-const shot = [];
-
-const getShot = () => {
+const addShot = () => {
   shot.push(convertShotInNumber());
   return shot;
 };
@@ -67,20 +70,17 @@ const checkRestrictionsOfShots = () => {
   if (convertShotInNumber() <= 0 || convertShotInNumber() > 100) return true;
   if (shot.includes(convertShotInNumber())) return true;
   if (convertShotInNumber() % 1 !== 0) return true;
+  return false;
 };
 
 const deletePrintShot = () => {
-  if (checkRestrictionsOfShots()) return;
-
   $previousShot.textContent = "";
   $shotInserted.textContent = "";
 };
 
 const printShot = () => {
-  if (checkRestrictionsOfShots()) return;
-
   $previousShot.textContent = `Palpites anteriores: `;
-  $shotInserted.textContent = getShot().join(", ");
+  $shotInserted.textContent = shot.join(", ");
 
   $previousShotWrapper.appendChild($previousShot);
   $previousShotWrapper.appendChild($shotInserted);
@@ -91,26 +91,79 @@ const verifyShotInRandomNumber = () => {
   if (convertShotInNumber() < randomNumber) return -1;
   if (convertShotInNumber() === randomNumber) return 0;
   if (convertShotInNumber() > randomNumber) return 1;
-  if (checkRestrictionsOfShots()) return false;
 };
 
 const printCheckedRandomNumber = () => {
   const checker = verifyShotInRandomNumber();
 
-  if (checker === 0)
+  if (checker === 0) {
+    $checkerShot.classList.remove("checkerShotError");
     $checkerShot.textContent = `Parabéns! Seu palpite está correto!`;
-  if (checker === -1)
+  }
+  if (checker === -1) {
+    $checkerShot.classList.add("checkerShotError");
     $checkerShot.textContent = `Errado! Seu palpite está muito baixo!`;
-  if (checker === 1)
+  }
+  if (checker === 1) {
+    $checkerShot.classList.add("checkerShotError");
     $checkerShot.textContent = `Errado! Seu palpite está muito alto!`;
+  }
+  if (checker === false) return false;
 
   $container.appendChild($checkerShot);
 };
 
+const verifyEndGame = () => {
+  if (verifyNumberMatches() && verifyShotInRandomNumber() !== 0)
+    $checkerShot.textContent = `Fim de Jogo!`;
+};
+
+const verifyNumberMatches = () => {
+  if (shot.length === 10) return true;
+};
+
+const insertButtonReset = () => {
+  if (verifyShotInRandomNumber() === 0 || verifyNumberMatches()) {
+    $container.appendChild($buttonReset);
+    disabledElement($buttonSend);
+    disabledElement($shot);
+  }
+};
+
+const resetGame = () => {
+  randomNumber = "";
+  createRandomNumber();
+  shot = [];
+  $shot.value = "";
+  $previousShotWrapper.remove();
+  $checkerShot.remove();
+  $buttonReset.remove();
+};
+
+const disabledElement = (element) => {
+  element.disabled = true;
+};
+
+const enableElement = (element) => {
+  element.disabled = false;
+};
+
 $buttonSend.addEventListener("click", () => {
-  checkRestrictionsOfShots();
+  if (checkRestrictionsOfShots()) return;
   deletePrintShot();
+  addShot();
   printShot();
   printCheckedRandomNumber();
+  verifyEndGame();
+  insertButtonReset();
 });
-console.log(randomNumber);
+
+$shot.addEventListener("click", () => {
+  $shot.value = "";
+});
+
+$buttonReset.addEventListener("click", () => {
+  resetGame();
+  enableElement($buttonSend);
+  enableElement($shot);
+});
