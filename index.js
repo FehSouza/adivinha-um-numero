@@ -148,7 +148,7 @@ const enableElement = (element) => {
   element.disabled = false;
 };
 
-$buttonSend.addEventListener("click", () => {
+const playGame = () => {
   if (checkRestrictionsOfShots()) return;
   deletePrintShot();
   addShot();
@@ -156,10 +156,14 @@ $buttonSend.addEventListener("click", () => {
   printCheckedRandomNumber();
   verifyEndGame();
   insertButtonReset();
-});
-
-$shot.addEventListener("click", () => {
   $shot.value = "";
+  $shot.focus();
+};
+
+$buttonSend.addEventListener("click", playGame);
+
+$shot.addEventListener("keypress", (event) => {
+  if (event.key === "Enter") playGame();
 });
 
 $buttonReset.addEventListener("click", () => {
